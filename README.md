@@ -939,3 +939,136 @@
                 { title: { en: 'Human Connection', zh: '人际连接' }, designer: { en: 'Designer E', zh: '设计师E' } },
                 { title: { en: 'Community Bond', zh: '社区纽带' }, designer: { en: 'Designer F', zh: '设计师F' } },
                 { title: { en: 'Empathy Design', zh: '同理设计' }, designer: { en: 'Designer G', zh: '设计师G' } },
+                { title: { en: 'Social Impact', zh: '社会影响' }, designer: { en: 'Designer H', zh: '设计师H' } }
+            ],
+            partner: [
+                { title: { en: 'Tech Synergy', zh: '技术协同' }, designer: { en: 'Designer I', zh: '设计师I' } },
+                { title: { en: 'Collaborative Creation', zh: '协作创造' }, designer: { en: 'Designer J', zh: '设计师J' } },
+                { title: { en: 'Innovation Partnership', zh: '创新伙伴' }, designer: { en: 'Designer K', zh: '设计师K' } },
+                { title: { en: 'Future Alliance', zh: '未来联盟' }, designer: { en: 'Designer L', zh: '设计师L' } }
+            ]
+        };
+        
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'zh' : 'en';
+            localStorage.setItem('lang', currentLang);
+            updateLanguage();
+        }
+        
+        function updateLanguage() {
+            const langText = currentLang === 'en' ? '中文' : 'EN';
+            document.getElementById('langText').textContent = langText;
+            document.getElementById('langTextMobile').textContent = langText;
+            
+            document.querySelectorAll('[data-en]').forEach(el => {
+                el.textContent = el.getAttribute(`data-${currentLang}`);
+            });
+            
+            document.querySelectorAll('.about-text-en').forEach(el => {
+                if (currentLang === 'en') {
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
+            
+            document.querySelectorAll('.about-text-zh').forEach(el => {
+                if (currentLang === 'zh') {
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
+            
+            document.documentElement.lang = currentLang;
+        }
+        
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            const isHidden = mobileMenu.classList.toggle('hidden');
+            mobileMenuBtn.setAttribute('aria-expanded', !isHidden);
+        });
+        
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            });
+        });
+        
+        const navbar = document.getElementById('navbar');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('nav-sticky');
+            } else {
+                navbar.classList.remove('nav-sticky');
+            }
+        });
+        
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.fade-in-up').forEach(el => {
+            observer.observe(el);
+        });
+        
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        function openWorkDetail(section, index) {
+            const work = worksData[section][index - 1];
+            if (work) {
+                const modal = document.getElementById('workModal');
+                const titleEl = modal.querySelector('#workModalTitle');
+                const designerEl = modal.querySelector('p.text-\\[\\#D9FF00\\]');
+                
+                titleEl.textContent = work.title[currentLang];
+                designerEl.textContent = work.designer[currentLang];
+                
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                modal.focus();
+            }
+        }
+        
+        function closeWorkDetail() {
+            document.getElementById('workModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+        
+        document.getElementById('langToggle').addEventListener('click', toggleLanguage);
+        document.getElementById('langToggleMobile').addEventListener('click', toggleLanguage);
+        
+        updateLanguage();
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeWorkDetail();
+            }
+        });
+    </script>
+</body>
+</html>
